@@ -12,7 +12,6 @@ public class RentController {
 	
 	public void connectToDb() {
 		connected = rentDao.connect();
-		connected = rentDao.addDummyFlat();
 	}
 	
 	

@@ -7,8 +7,7 @@ public class Tenant {
 	private int balance;
 	private int flatnum;
 
-	public Tenant(int id, String name, int balance, int flatnum) {
-		this.id = id;
+	public Tenant(String name, int balance, int flatnum) {
 		this.name = name;
 		this.balance = balance;
 		this.flatnum = flatnum;

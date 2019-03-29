@@ -8,9 +8,33 @@
 <h:head>
 </h:head>
 <h:body>
-	<h:form>
-		<p:inputText disabled="true" value="#{rentController.connected}" />
-		<p:commandButton action="#{rentController.connectToDb()}" ajax="false" />
-	</h:form>
+	<ui:composition template="templates/template.xhtml">
+		<ui:define name="content">
+			<h:panelGrid columns="2" cellpadding="5">
+				<h:form>
+				Kapcsolódva?  
+				<p:inputText id="con" styleClass="text-input" disabled="true"
+						value="#{rentController.connected}" />
+					<p:commandButton title="Kapcsolódás az adatbázishoz"
+						action="#{rentController.connectToDb()}" ajax="false" />
+				</h:form>
+				<br />
+				<h:form id="move">
+				Lakó költöztetés: <br />
+					<p:inputNumber binding="#{flatId}" disabled="#{!rentController.connected}"
+						styleClass="text-input" placeholder="Lakás ID" required="true"
+						requiredMessage="Lakásnév szükséges!" thousandSeparator="" decimalSeparator="." decimalPlaces="0" />
+					<br />
+					<p:inputText binding="#{tenantName}" disabled="#{!rentController.connected}"
+						placeholder="Új lakó neve" required="true"
+						requiredMessage="Lakónév szükséges, vagy 'üres'!" />
+					<br />
+					<p:commandButton title="Új lakó beköltöztetése"
+						action="#{rentController.moveTenant(flatId.value, tenantName.value)}"
+						ajax="false" disabled="#{!rentController.connected}" />
+				</h:form>
+			</h:panelGrid>
+		</ui:define>
+	</ui:composition>
 </h:body>
 </html>

@@ -21,7 +21,11 @@ public class RentController {
 	}
 	
 	public boolean depositSum(String tenantName, int sum) {
-		return rentDao.deposit(tenantName, sum);
+		return rentDao.recordDeposit(tenantName, sum);
+	}
+	
+	public boolean commonCharge(int sum, String desc) {
+		return rentDao.recordCommonCharge(sum, desc);
 	}
 	
 // =============================================================================================	

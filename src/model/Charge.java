@@ -2,7 +2,7 @@ package model;
 
 import java.util.Date;
 
-public class Expense {
+public class Charge {
 
 	private int id;
 	private Date date;
@@ -10,9 +10,7 @@ public class Expense {
 	private String description;
 	private int tenant;
 
-	public Expense(int id, Date date, int amount, String description, int tenant) {
-		this.id = id;
-		this.date = date;
+	public Charge(int amount, String description, int tenant) {
 		this.amount = amount;
 		this.description = description;
 		this.tenant = tenant;

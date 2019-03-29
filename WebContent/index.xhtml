@@ -11,6 +11,7 @@
 	<ui:composition template="templates/template.xhtml">
 		<ui:define name="content">
 			<h:panelGrid columns="2" cellpadding="5">
+				
 				<h:form>
 				Kapcsolódva?  
 				<p:inputText id="con" styleClass="text-input" disabled="true"
@@ -19,6 +20,7 @@
 						action="#{rentController.connectToDb()}" ajax="false" />
 				</h:form>
 				<br />
+				
 				<h:form>
 				Lakó költöztetés: <br />
 					<p:inputNumber binding="#{flatId}"
@@ -40,6 +42,7 @@
 					resizable="false" draggable="false">
 					<p:commandButton title="Bezárás" onclick="PF('dlg1').hide();" />
 				</p:dialog>
+				
 				<h:form>
 				Lakó befizetés: <br />
 					<p:inputText binding="#{tenantName2}"
@@ -60,6 +63,28 @@
 					resizable="false" draggable="false">
 					<p:commandButton title="Bezárás" onclick="PF('dlg2').hide();" />
 				</p:dialog>
+				
+				<h:form>
+				Közös költség terhelése a lakókra: <br />
+					<p:inputText binding="#{desc}"
+						disabled="#{!rentController.connected}" placeholder="Költség leírása"
+						required="true" requiredMessage="Leírás szükséges!" />
+					<br />
+					<p:inputNumber binding="#{sum}"
+						disabled="#{!rentController.connected}" placeholder="Összeg"
+						required="true" requiredMessage="Összeg szükséges!"
+						thousandSeparator="" decimalSeparator="." decimalPlaces="0" />
+					<br />
+					<p:commandButton title="Költség kiírása"
+						action="#{rentController.commonCharge(sum.value, desc.value)}"
+						ajax="true" disabled="#{!rentController.connected}"
+						onsuccess="PF('dlg3').show();" />
+				</h:form>
+				<p:dialog header="Költség kiírás sikeres!" widgetVar="dlg3" modal="true"
+					resizable="false" draggable="false">
+					<p:commandButton title="Bezárás" onclick="PF('dlg3').hide();" />
+				</p:dialog>
+				
 			</h:panelGrid>
 		</ui:define>
 	</ui:composition>

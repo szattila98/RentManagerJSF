@@ -19,20 +19,47 @@
 						action="#{rentController.connectToDb()}" ajax="false" />
 				</h:form>
 				<br />
-				<h:form id="move">
+				<h:form>
 				Lakó költöztetés: <br />
-					<p:inputNumber binding="#{flatId}" disabled="#{!rentController.connected}"
-						styleClass="text-input" placeholder="Lakás ID" required="true"
-						requiredMessage="Lakásnév szükséges!" thousandSeparator="" decimalSeparator="." decimalPlaces="0" />
+					<p:inputNumber binding="#{flatId}"
+						disabled="#{!rentController.connected}" styleClass="text-input"
+						placeholder="Lakás ID" required="true"
+						requiredMessage="Lakás ID szükséges!" thousandSeparator=""
+						decimalSeparator="." decimalPlaces="0" />
 					<br />
-					<p:inputText binding="#{tenantName}" disabled="#{!rentController.connected}"
-						placeholder="Új lakó neve" required="true"
-						requiredMessage="Lakónév szükséges, vagy 'üres'!" />
+					<p:inputText binding="#{tenantName1}"
+						disabled="#{!rentController.connected}" placeholder="Új lakó neve"
+						required="true" requiredMessage="Lakónév szükséges, vagy 'üres'!" />
 					<br />
 					<p:commandButton title="Új lakó beköltöztetése"
-						action="#{rentController.moveTenant(flatId.value, tenantName.value)}"
-						ajax="false" disabled="#{!rentController.connected}" />
+						action="#{rentController.moveTenant(flatId.value, tenantName1.value)}"
+						ajax="true" disabled="#{!rentController.connected}"
+						onsuccess="PF('dlg2').show();" />
 				</h:form>
+				<p:dialog header="Költözés sikeres!" widgetVar="dlg1" modal="true"
+					resizable="false" draggable="false">
+					<p:commandButton title="Bezárás" onclick="PF('dlg1').hide();" />
+				</p:dialog>
+				<h:form>
+				Lakó befizetés: <br />
+					<p:inputText binding="#{tenantName2}"
+						disabled="#{!rentController.connected}" placeholder="Lakó neve"
+						required="true" requiredMessage="Lakónév szükséges!" />
+					<br />
+					<p:inputNumber binding="#{sum}"
+						disabled="#{!rentController.connected}" placeholder="Összeg"
+						required="true" requiredMessage="Összeg szükséges!"
+						thousandSeparator="" decimalSeparator="." decimalPlaces="0" />
+					<br />
+					<p:commandButton title="Befizetés"
+						action="#{rentController.depositSum(tenantName2.value, sum.value)}"
+						ajax="true" disabled="#{!rentController.connected}"
+						onsuccess="PF('dlg2').show();" />
+				</h:form>
+				<p:dialog header="Befizetés sikeres!" widgetVar="dlg2" modal="true"
+					resizable="false" draggable="false">
+					<p:commandButton title="Bezárás" onclick="PF('dlg2').hide();" />
+				</p:dialog>
 			</h:panelGrid>
 		</ui:define>
 	</ui:composition>

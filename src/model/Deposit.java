@@ -9,9 +9,7 @@ public class Deposit {
 	private int amount;
 	private int tenant;
 
-	public Deposit(int id, Date date, int amount, int tenant) {
-		this.id = id;
-		this.date = date;
+	public Deposit(int amount, int tenant) {
 		this.amount = amount;
 		this.tenant = tenant;
 	}

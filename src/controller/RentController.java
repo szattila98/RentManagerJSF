@@ -16,8 +16,12 @@ public class RentController {
 		connected = rentDao.connect();
 	}
 	
-	public void moveTenant(int flatId, String tenantName) {
-		rentDao.setTenant(flatId, tenantName);
+	public boolean moveTenant(int flatId, String tenantName) {
+		return rentDao.setTenant(flatId, tenantName);
+	}
+	
+	public boolean depositSum(String tenantName, int sum) {
+		return rentDao.deposit(tenantName, sum);
 	}
 	
 // =============================================================================================	

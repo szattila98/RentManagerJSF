@@ -24,10 +24,10 @@ public class RentDao {
 		}
 		return true;
 	}
-	
+
 	public boolean setTenant(int flatId, String tenantName) {
 		try {
-			ps = connection.prepareStatement("UPDATE tenants SET name=? WHERE flatnum=?" );
+			ps = connection.prepareStatement("UPDATE tenants SET name=? WHERE flatnum=?");
 			ps.setString(1, tenantName);
 			ps.setInt(2, flatId);
 			ps.executeUpdate();
@@ -38,7 +38,42 @@ public class RentDao {
 		}
 		return true;
 	}
-	
+
+	public boolean deposit(String tenantName, int sum) {
+		int tenant = 0;
+		try {
+			ps = connection.prepareStatement("SELECT flatnum FROM tenants WHERE name=?");
+			ps.setString(1, tenantName);
+			rs = ps.executeQuery();
+			while (rs.next())
+				tenant = rs.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		try {
+			ps = connection.prepareStatement("INSERT INTO deposits(sum, tenant) VALUES (?,?)" );
+			ps.setInt(1, sum);
+			ps.setInt(2, tenant);
+			ps.executeUpdate();
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		try {
+			ps = connection.prepareStatement("UPDATE tenants SET balance=balance+? WHERE id=?" );
+			ps.setInt(1, sum);
+			ps.setInt(2, tenant);
+			ps.executeUpdate();
+			connection.commit();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
 //	public String query() {
 //
 //		try {

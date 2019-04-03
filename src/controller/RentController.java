@@ -12,13 +12,13 @@ import dao.RentDao;
 @ApplicationScoped
 public class RentController {
 
-	private RentDao rentDao = new RentDao();
-	private String name;
-	private List<String> names;
-
+	private RentDao rentDao;
+	private String nameForDelete;
+	private String nameForCashIn;
+	
 	@PostConstruct
 	public void init() {
-		names = fillTenantList();
+		rentDao = new RentDao();
 	}
 
 	public boolean moveInTenant(int floor, int door, String tenantName) {
@@ -42,29 +42,25 @@ public class RentController {
 	public List<String> fillTenantList() {
 		return rentDao.fillTenantDropdown();
 	}
-
-	public RentDao getRentDao() {
-		return rentDao;
+	
+	public void clear() {
+		
 	}
 
-	public void setRentDao(RentDao rentDao) {
-		this.rentDao = rentDao;
+	public String getNameForDelete() {
+		return nameForDelete;
 	}
 
-	public String getName() {
-		return name;
+	public void setNameForDelete(String nameForDelete) {
+		this.nameForDelete = nameForDelete;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public String getNameForCashIn() {
+		return nameForCashIn;
 	}
 
-	public List<String> getNames() {
-		return names;
-	}
-
-	public void setNames(List<String> names) {
-		this.names = names;
+	public void setNameForCashIn(String nameForCashIn) {
+		this.nameForCashIn = nameForCashIn;
 	}
 
 }

@@ -11,76 +11,108 @@
 	<ui:composition template="templates/template.xhtml">
 		<ui:define name="content">
 
-			<h:form>
-				Lakó költöztetés: <br />
-				<br />
-				<p:inputNumber binding="#{floor}" styleClass="text-input"
-					placeholder="Emelet" required="true"
-					requiredMessage="Emelet szükséges!" thousandSeparator=""
-					decimalSeparator="." decimalPlaces="0" />
-				<br />
-				<p:inputNumber binding="#{door}" styleClass="text-input"
-					placeholder="Ajtószám" required="true"
-					requiredMessage="Ajtószám szükséges!" thousandSeparator=""
-					decimalSeparator="." decimalPlaces="0" />
-				<br />
-				<p:inputText binding="#{tenantName1}" placeholder="Lakó neve"
-					requiredMessage="Lakónév szükséges!" />
-				<br />
-				<p:commandButton id="in" title="Új lakó beköltöztetése"
-					action="#{rentController.moveInTenant(floor.value, door.value, tenantName1.value)}"
-					ajax="true" onsuccess="PF('dlg1').show();" />
-			</h:form>
+			<p:panel header="Lakó beköltöztetése"
+				footer="Írja be az emeletet, lakás ajtó számát és az új lakó nevét a beköltöztetéshez!"
+				style="margin-bottom:20px">
+				<h:panelGrid columns="2" cellpadding="10">
+					<h:form id="in">
+						<p:inputNumber id="floor" binding="#{floor}" placeholder="Emelet"
+							required="true" requiredMessage="Emelet szükséges!"
+							thousandSeparator="" decimalSeparator="." decimalPlaces="0" />
+						<p:message for="floor" style="width: 200px" />
+						<p:inputNumber id="door" binding="#{door}" placeholder="Ajtószám"
+							required="true" requiredMessage="Ajtószám szükséges!"
+							thousandSeparator="" decimalSeparator="." decimalPlaces="0" />
+						<p:message for="door" style="width: 200px" />
+						<p:inputText id="tenantName1" binding="#{tenantName1}"
+							placeholder="Lakó neve" requiredMessage="Lakónév szükséges!"
+							required="true" />
+						<p:message for="tenantName1" style="width: 200px" />
+						<p:commandButton title="Új lakó beköltöztetése"
+							action="#{rentController.moveInTenant(floor.value, door.value, tenantName1.value)}"
+							ajax="true" update="in"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg1').show();" />
+					</h:form>
+				</h:panelGrid>
+			</p:panel>
 
-			<h:form>
-			<br />
-			Kilakoltatás
-				<p:selectOneMenu value="#{rentController.name}" style="width:150px">
-					<f:selectItem itemLabel="Válasszon lakót" itemValue=""
-						noSelectionOption="true" />
-					<f:selectItems value="#{rentController.names}" />
-				</p:selectOneMenu>
-				<p:commandButton id="out" title="Kilakoltatás"
-					action="#{rentController.moveOutTenant(floor.value, door.value)}"
-					ajax="true" onsuccess="PF('dlg1').show();" />
-			</h:form>
+			<p:panel header="Kilakoltatás"
+				footer="Válasszon egy lakót akit majd jól kilakoltathat!"
+				style="margin-bottom:20px">
+				<h:panelGrid columns="2" cellpadding="10">
+					<h:form id="out">
+						<p:autoComplete id="dd1" dropdown="true"
+							value="#{rentController.nameForDelete}"
+							completeMethod="#{rentController.fillTenantList()}"
+							required="true" requiredMessage="Név szükséges!">
+							<p:ajax event="itemSelect" update="@all" />
+						</p:autoComplete>
+						<p:message for="dd1" style="width: 200px" />
+						<p:commandButton title="Kilakoltatás"
+							action="#{rentController.moveOutTenant(rentController.nameForDelete)}"
+							ajax="true"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg1').show();"
+							update="out" />
+					</h:form>
+				</h:panelGrid>
+			</p:panel>
+
+			<p:panel header="Lakó befizetés"
+				footer="Válassza ki a lakó nevét aki befizetett és a befizetés összegét!"
+				style="margin-bottom:20px">
+				<h:panelGrid columns="2" cellpadding="10">
+					<h:form id="cashIn">
+						<p:autoComplete id="dd2" dropdown="true"
+							value="#{rentController.nameForCashIn}"
+							completeMethod="#{rentController.fillTenantList()}"
+							required="true" requiredMessage="Név szükséges!">
+							<p:ajax event="itemSelect" update="@all" />
+						</p:autoComplete>
+						<p:message for="dd2" style="width: 200px" />
+						<p:inputNumber id="sum1" binding="#{sum1}" placeholder="Összeg"
+							required="true" requiredMessage="Összeg szükséges!"
+							thousandSeparator="" decimalSeparator="." decimalPlaces="0" />
+						<p:message for="sum1" style="width: 200px" />
+						<p:commandButton title="Befizetés"
+							action="#{rentController.depositSum(rentController.nameForCashIn, sum1.value)}"
+							ajax="true"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg2').show();"
+							update="cashIn" />
+					</h:form>
+				</h:panelGrid>
+			</p:panel>
+
+			<p:panel header="Közös költség terhelése a lakókra"
+				footer="Írja be a költség okát és az összegét! Ez az összeg aztán az adott lakás négyzetméterével felszorozva terhelődik az összes lakó egyenlegére!"
+				style="margin-bottom:20px">
+				<h:panelGrid columns="2" cellpadding="10">
+					<h:form id="cch">
+						<p:inputText id="desc" binding="#{desc}"
+							placeholder="Költség leírása" required="true"
+							requiredMessage="Leírás szükséges!" />
+						<p:message for="desc" style="width: 200px" />
+						<p:inputNumber id="sum2" binding="#{sum2}" placeholder="Összeg"
+							required="true" requiredMessage="Összeg szükséges!"
+							thousandSeparator="" decimalSeparator="." decimalPlaces="0" />
+						<p:message for="sum2" style="width: 200px" />
+						<p:commandButton title="Költség kiírása"
+							action="#{rentController.commonCharge(sum2.value, desc.value)}"
+							ajax="true"
+							oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg3').show();"
+							update="cch" />
+					</h:form>
+				</h:panelGrid>
+			</p:panel>
+
 
 			<p:dialog header="Költözés sikeres!" widgetVar="dlg1" modal="true"
 				resizable="false" draggable="false">
 				<p:commandButton title="Bezárás" onclick="PF('dlg1').hide();" />
 			</p:dialog>
-
-			<h:form>
-				Lakó befizetés: <br />
-				<p:inputText binding="#{tenantName2}" placeholder="Lakó neve"
-					required="true" requiredMessage="Lakónév szükséges!" />
-				<br />
-				<p:inputNumber binding="#{sum1}" placeholder="Összeg"
-					required="true" requiredMessage="Összeg szükséges!"
-					thousandSeparator="" decimalSeparator="." decimalPlaces="0" />
-				<br />
-				<p:commandButton title="Befizetés"
-					action="#{rentController.depositSum(tenantName2.value, sum1.value)}"
-					ajax="true" onsuccess="PF('dlg2').show();" />
-			</h:form>
 			<p:dialog header="Befizetés sikeres!" widgetVar="dlg2" modal="true"
 				resizable="false" draggable="false">
 				<p:commandButton title="Bezárás" onclick="PF('dlg2').hide();" />
 			</p:dialog>
-
-			<h:form>
-				Közös költség terhelése a lakókra: <br />
-				<p:inputText binding="#{desc}" placeholder="Költség leírása"
-					required="true" requiredMessage="Leírás szükséges!" />
-				<br />
-				<p:inputNumber binding="#{sum2}" placeholder="Összeg"
-					required="true" requiredMessage="Összeg szükséges!"
-					thousandSeparator="" decimalSeparator="." decimalPlaces="0" />
-				<br />
-				<p:commandButton title="Költség kiírása"
-					action="#{rentController.commonCharge(sum2.value, desc.value)}"
-					ajax="true" onsuccess="PF('dlg3').show();" />
-			</h:form>
 			<p:dialog header="Költség kiírás sikeres!" widgetVar="dlg3"
 				modal="true" resizable="false" draggable="false">
 				<p:commandButton title="Bezárás" onclick="PF('dlg3').hide();" />

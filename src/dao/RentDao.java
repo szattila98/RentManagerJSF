@@ -7,25 +7,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import model.CommonCharge;
 
 public class RentDao {
 
-	private Connection connection = null;
+	private Connection connection = connect();
 	private String sql;
 	private Statement s;
 	private PreparedStatement ps;
 	private ResultSet rs;
 
-	public boolean connect() {
+	public Connection connect() {
 		try {
 			connection = DriverManager.getConnection("jdbc:mariadb://localhost:3306/rentmanager?user=root&password=");
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
+			return null;
 		}
-		return true;
+		return connection;
 	}
 
 	public boolean setTenant(int floor, int door, String tenantName) {
@@ -51,19 +52,10 @@ public class RentDao {
 		return true;
 	}
 
-	public boolean deleteTenant(int floor, int door) {
-		int flatId = 0;
+	public boolean deleteTenant(String name) {
 		try {
-			ps = connection.prepareStatement(
-					"SELECT flats.id FROM tenants INNER JOIN flats ON tenants.flatnum=flats.id WHERE flats.floor=? AND flats.door=?");
-			ps.setInt(1, floor);
-			ps.setInt(2, door);
-			rs = ps.executeQuery();
-			while (rs.next()) {
-				flatId = rs.getInt(1);
-			}
-			ps = connection.prepareStatement("UPDATE tenants SET name=NULL WHERE flatnum=?");
-			ps.setInt(1, flatId);
+			ps = connection.prepareStatement("UPDATE tenants SET name=NULL WHERE name=?");
+			ps.setString(1, name);
 			ps.executeUpdate();
 			connection.commit();
 		} catch (SQLException e) {
@@ -72,7 +64,7 @@ public class RentDao {
 		}
 		return true;
 	}
-	
+
 	public boolean recordDeposit(String tenantName, int sum) {
 		int tenant = 0;
 		int balance = 0;
@@ -132,7 +124,8 @@ public class RentDao {
 				ps.setString(2, desc);
 				ps.setInt(3, i.getTenant());
 				ps.executeUpdate();
-				ps = connection.prepareStatement("UPDATE tenants SET balance=balance+? WHERE id=? AND name IS NOT NULL");
+				ps = connection
+						.prepareStatement("UPDATE tenants SET balance=balance+? WHERE id=? AND name IS NOT NULL");
 				ps.setInt(1, -sum * i.getFloorSpace());
 				ps.setInt(2, i.getTenant());
 				ps.executeUpdate();
@@ -145,39 +138,17 @@ public class RentDao {
 		return true;
 	}
 
-//	public String query() {
-//
-//		try {
-//			s = connection.createStatement();
-//			rs = s.executeQuery("Select name from tenants where id=1");
-//			while (rs.next()) {
-//	            return rs.getString(1);
-//	        }
-//		} catch (SQLException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return "heh";
-//
-//	}
-
-//	public boolean addDummyData() {
-//		try {
-//
-//			for (int j = 1; j < 13; j++) {
-//				PreparedStatement ps = connection
-//						.prepareStatement("INSERT INTO tenants(name, balance, flatnum) VALUES (?,?,?)");
-//				ps.setString(1, "empty");
-//				ps.setInt(2, 0);
-//				ps.setInt(3, j);
-//				ps.execute();
-//			}
-//
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//			return false;
-//		}
-//		return true;
-//	}
-
+	public List<String> fillTenantDropdown() {
+		List<String> names = new ArrayList<String>();
+		try {
+			ps = connection.prepareStatement("SELECT name FROM tenants WHERE name IS NOT NULL");
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				names.add(rs.getString(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return names;
+	}
 }

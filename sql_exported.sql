@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Server version:               10.3.11-MariaDB - mariadb.org binary distribution
+-- Server version:               10.3.13-MariaDB - mariadb.org binary distribution
 -- Server OS:                    Win64
 -- HeidiSQL Verzió:              10.1.0.5464
 -- --------------------------------------------------------
@@ -13,10 +13,12 @@
 
 
 -- Dumping database structure for rentmanager
+DROP DATABASE IF EXISTS `rentmanager`;
 CREATE DATABASE IF NOT EXISTS `rentmanager` /*!40100 DEFAULT CHARACTER SET latin1 */;
 USE `rentmanager`;
 
 -- Dumping structure for tábla rentmanager.charges
+DROP TABLE IF EXISTS `charges`;
 CREATE TABLE IF NOT EXISTS `charges` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NOT NULL DEFAULT current_timestamp(),
@@ -28,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `charges` (
   CONSTRAINT `FK_expense_tenants` FOREIGN KEY (`tenant`) REFERENCES `tenants` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
 
--- Dumping data for table rentmanager.charges: ~0 rows (approximately)
+-- Dumping data for table rentmanager.charges: ~7 rows (approximately)
 /*!40000 ALTER TABLE `charges` DISABLE KEYS */;
 REPLACE INTO `charges` (`id`, `date`, `sum`, `description`, `tenant`) VALUES
 	(13, '2019-03-29 14:52:26', 180000, 'Garázsok vétele', 1),
@@ -46,6 +48,7 @@ REPLACE INTO `charges` (`id`, `date`, `sum`, `description`, `tenant`) VALUES
 /*!40000 ALTER TABLE `charges` ENABLE KEYS */;
 
 -- Dumping structure for tábla rentmanager.deposits
+DROP TABLE IF EXISTS `deposits`;
 CREATE TABLE IF NOT EXISTS `deposits` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NOT NULL DEFAULT current_timestamp(),
@@ -64,6 +67,7 @@ REPLACE INTO `deposits` (`id`, `date`, `sum`, `tenant`) VALUES
 /*!40000 ALTER TABLE `deposits` ENABLE KEYS */;
 
 -- Dumping structure for tábla rentmanager.flats
+DROP TABLE IF EXISTS `flats`;
 CREATE TABLE IF NOT EXISTS `flats` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `floor` int(11) NOT NULL DEFAULT 0,
@@ -91,9 +95,10 @@ REPLACE INTO `flats` (`id`, `floor`, `door`, `floorSpace`, `airSpace`) VALUES
 /*!40000 ALTER TABLE `flats` ENABLE KEYS */;
 
 -- Dumping structure for tábla rentmanager.tenants
+DROP TABLE IF EXISTS `tenants`;
 CREATE TABLE IF NOT EXISTS `tenants` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` text NOT NULL DEFAULT 'empty',
+  `name` text DEFAULT NULL,
   `balance` int(11) NOT NULL DEFAULT 0,
   `flatnum` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
@@ -106,15 +111,15 @@ CREATE TABLE IF NOT EXISTS `tenants` (
 REPLACE INTO `tenants` (`id`, `name`, `balance`, `flatnum`) VALUES
 	(1, 'Lakatos Alexander', -180000, 1),
 	(2, 'BSC Bertalan', -180000, 2),
-	(3, 'empty', -180000, 3),
+	(3, NULL, 0, 3),
 	(4, 'Tokányos Rókus', -160000, 4),
-	(5, 'empty', -160000, 5),
+	(5, NULL, 0, 5),
 	(6, 'Zsebabai Imelda', -135000, 6),
-	(7, 'empty', -140000, 7),
+	(7, NULL, 0, 7),
 	(8, 'Berentei Parcifál', -140000, 8),
 	(9, 'Nyokkai Takszi', -140000, 9),
-	(10, 'empty', -120000, 10),
-	(11, 'empty', -120000, 11),
+	(10, NULL, 0, 10),
+	(11, NULL, 0, 11),
 	(12, 'Perhényi Tivadar', -120000, 12);
 /*!40000 ALTER TABLE `tenants` ENABLE KEYS */;
 

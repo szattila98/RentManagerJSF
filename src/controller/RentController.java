@@ -1,5 +1,8 @@
 package controller;
 
+import java.util.List;
+
+import javax.annotation.PostConstruct;
 import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 
@@ -9,20 +12,21 @@ import dao.RentDao;
 @ApplicationScoped
 public class RentController {
 
-	private boolean connected = false;
-	private boolean evict = false;
 	private RentDao rentDao = new RentDao();
+	private String name;
+	private List<String> names;
 
-	public void connectToDb() {
-		connected = rentDao.connect();
+	@PostConstruct
+	public void init() {
+		names = fillTenantList();
 	}
 
 	public boolean moveInTenant(int floor, int door, String tenantName) {
 		return rentDao.setTenant(floor, door, tenantName);
 	}
 
-	public boolean moveOutTenant(int floor, int door) {
-		return rentDao.deleteTenant(floor, door);
+	public boolean moveOutTenant(String name) {
+		return rentDao.deleteTenant(name);
 	}
 
 	public boolean depositSum(String tenantName, int sum) {
@@ -35,26 +39,8 @@ public class RentController {
 
 // =============================================================================================	
 
-	public void evictMode() {
-	    if (evict) {
-			evict = false;
-		}else evict = true;
-	}
-	
-	public boolean isConnected() {
-		return connected;
-	}
-
-	public void setConnected(boolean connected) {
-		this.connected = connected;
-	}
-
-	public boolean isEvict() {
-		return evict;
-	}
-
-	public void setEvict(boolean evict) {
-		this.evict = evict;
+	public List<String> fillTenantList() {
+		return rentDao.fillTenantDropdown();
 	}
 
 	public RentDao getRentDao() {
@@ -63,6 +49,22 @@ public class RentController {
 
 	public void setRentDao(RentDao rentDao) {
 		this.rentDao = rentDao;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public List<String> getNames() {
+		return names;
+	}
+
+	public void setNames(List<String> names) {
+		this.names = names;
 	}
 
 }

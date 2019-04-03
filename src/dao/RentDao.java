@@ -162,26 +162,12 @@ public class RentDao {
 			e.printStackTrace();
 			return false;
 		}
-		double divident = sum/billing.size();
-		double divedsum = 0;
+		int maxFloorspace = 0;
 		for (Billing i: billing) {
-			if (i.getFloorSpace() == 90) {
-				i.setCost(divident);
-			}
-			if (i.getFloorSpace() == 80) {
-				i.setCost(divident*0.9);
-			}
-			if (i.getFloorSpace() == 70) {
-				i.setCost(divident*0.8);
-			}
-			if (i.getFloorSpace() == 60) {
-				i.setCost(divident*0.7);
-			}
-			divedsum+=i.getCost();
+			maxFloorspace+=i.getFloorSpace();
 		}
-		double diffdiv = (sum - divedsum)/billing.size();
 		for (Billing i: billing) {
-			i.setCost(i.getCost()+diffdiv);
+			i.setCost((sum/maxFloorspace)*i.getFloorSpace());
 		}
 		try {
 			for (Billing i : billing) {

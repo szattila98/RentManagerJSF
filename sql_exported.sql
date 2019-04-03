@@ -1,6 +1,6 @@
 -- --------------------------------------------------------
 -- Host:                         127.0.0.1
--- Server version:               10.3.13-MariaDB - mariadb.org binary distribution
+-- Server version:               10.3.11-MariaDB - mariadb.org binary distribution
 -- Server OS:                    Win64
 -- HeidiSQL Verzió:              10.1.0.5464
 -- --------------------------------------------------------
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `charges` (
   CONSTRAINT `FK_expense_tenants` FOREIGN KEY (`tenant`) REFERENCES `tenants` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=latin1;
 
--- Dumping data for table rentmanager.charges: ~7 rows (approximately)
+-- Dumping data for table rentmanager.charges: ~12 rows (approximately)
 /*!40000 ALTER TABLE `charges` DISABLE KEYS */;
 REPLACE INTO `charges` (`id`, `date`, `sum`, `description`, `tenant`) VALUES
 	(13, '2019-03-29 14:52:26', 180000, 'Garázsok vétele', 1),
@@ -53,6 +53,7 @@ CREATE TABLE IF NOT EXISTS `deposits` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `date` datetime NOT NULL DEFAULT current_timestamp(),
   `sum` int(11) NOT NULL DEFAULT 0,
+  `balance_after` int(11) NOT NULL DEFAULT 0,
   `tenant` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `FK__tenants` (`tenant`),
@@ -61,9 +62,9 @@ CREATE TABLE IF NOT EXISTS `deposits` (
 
 -- Dumping data for table rentmanager.deposits: ~2 rows (approximately)
 /*!40000 ALTER TABLE `deposits` DISABLE KEYS */;
-REPLACE INTO `deposits` (`id`, `date`, `sum`, `tenant`) VALUES
-	(1, '2019-03-29 12:35:28', 20000, 6),
-	(2, '2019-03-29 12:35:47', 5000, 6);
+REPLACE INTO `deposits` (`id`, `date`, `sum`, `balance_after`, `tenant`) VALUES
+	(1, '2019-03-29 12:35:28', 20000, 0, 6),
+	(2, '2019-03-29 12:35:47', 5000, 0, 6);
 /*!40000 ALTER TABLE `deposits` ENABLE KEYS */;
 
 -- Dumping structure for tábla rentmanager.flats
@@ -109,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `tenants` (
 -- Dumping data for table rentmanager.tenants: ~12 rows (approximately)
 /*!40000 ALTER TABLE `tenants` DISABLE KEYS */;
 REPLACE INTO `tenants` (`id`, `name`, `balance`, `flatnum`) VALUES
-	(1, 'Lakatos Alexander', -180000, 1),
+	(1, NULL, -180000, 1),
 	(2, 'BSC Bertalan', -180000, 2),
 	(3, NULL, 0, 3),
 	(4, 'Tokányos Rókus', -160000, 4),

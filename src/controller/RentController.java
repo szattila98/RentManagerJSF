@@ -36,6 +36,10 @@ public class RentController {
 	public boolean commonCharge(int sum, String desc) {
 		return rentDao.recordCommonCharge(sum, desc);
 	}
+	
+	public boolean totalCost(int sum, String desc) {
+		return rentDao.recordTotalCost(sum, desc);
+	}
 
 // =============================================================================================	
 

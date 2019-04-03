@@ -141,6 +141,36 @@
 				</h:panelGrid>
 			</p:panel>
 
+			<p:panel header="Összköltség terhelése a lakókra"
+				footer="Írja be a költség okát és az összegét! Ez az összeg aztán az adott lakás négyzetméterével leosztva terhelődik az összes lakó egyenlegére!"
+				style="margin-bottom:20px">
+				<h:panelGrid columns="2" cellpadding="10">
+					<h:form id="tc">
+						<table>
+							<tr>
+								<td><p:inputText id="desc2" binding="#{desc2}"
+										placeholder="Költség leírása" required="true"
+										requiredMessage="Leírás szükséges!" /></td>
+								<td><p:message for="desc2" style="width: 200px" /></td>
+							</tr>
+							<tr>
+								<td><p:inputNumber id="sum3" binding="#{sum3}"
+										placeholder="Összeg" required="true"
+										requiredMessage="Összeg szükséges!" thousandSeparator=""
+										decimalSeparator="." decimalPlaces="0" /></td>
+								<td><p:message for="sum3" style="width: 200px" /></td>
+							</tr>
+							<tr>
+								<td><p:commandButton title="Költség kiírása"
+										action="#{rentController.totalCost(sum3.value, desc2.value)}"
+										ajax="true"
+										oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg3').show();"
+										update="tc" /></td>
+							</tr>
+						</table>
+					</h:form>
+				</h:panelGrid>
+			</p:panel>
 
 			<p:dialog header="Költözés sikeres!" widgetVar="dlg1" modal="true"
 				resizable="false" draggable="false">

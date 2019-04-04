@@ -26,6 +26,20 @@ public class RentDao {
 		return connection;
 	}
 
+	public List<String> fillTenantDropdown() {
+		List<String> names = new ArrayList<String>();
+		try {
+			ps = connection.prepareStatement("SELECT name FROM tenants WHERE name IS NOT NULL");
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				names.add(rs.getString(1));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return names;
+	}
+
 	public boolean setTenant(int floor, int door, String tenantName) {
 		int flatId = 0;
 		try {
@@ -101,29 +115,35 @@ public class RentDao {
 		return true;
 	}
 
-	public boolean recordCommonCharge(int sum, String desc) {
-		ArrayList<Billing> billing = new ArrayList<>();
+	public ArrayList<Billing> recordCommonCharge(int sum, String desc) {
+		ArrayList<Billing> billings = new ArrayList<>();
 		try {
 			ps = connection.prepareStatement(
-					"SELECT tenants.id, flats.floorSpace FROM tenants INNER JOIN flats ON tenants.flatnum=flats.id");
+					"SELECT tenants.id, flats.floorSpace, tenants.name FROM tenants INNER JOIN flats ON tenants.flatnum=flats.id WHERE tenants.name IS NOT NULL");
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				billing.add(new Billing(rs.getInt(1), rs.getInt(2)));
+				billings.add(new Billing(rs.getInt(1), rs.getInt(2), desc, rs.getString(3)));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
 		}
+		for (Billing i : billings) {
+			i.setCost(-sum * i.getFloorSpace());
+		}
+		return billings;
+	}
+
+	public boolean commitRecordedCommonCharge(List<Billing> billings) {
 		try {
-			for (Billing i : billing) {
+			for (Billing i : billings) {
 				ps = connection.prepareStatement("INSERT INTO charges(sum, description, tenant) VALUES (?,?,?)");
-				ps.setInt(1, sum * i.getFloorSpace());
-				ps.setString(2, desc);
+				ps.setInt(1, (int) i.getCost());
+				ps.setString(2, i.getDesc());
 				ps.setInt(3, i.getFlatnum());
 				ps.executeUpdate();
 				ps = connection
 						.prepareStatement("UPDATE tenants SET balance=balance+? WHERE id=? AND name IS NOT NULL");
-				ps.setInt(1, -sum * i.getFloorSpace());
+				ps.setInt(1, (int) i.getCost());
 				ps.setInt(2, i.getFlatnum());
 				ps.executeUpdate();
 			}
@@ -135,50 +155,39 @@ public class RentDao {
 		return true;
 	}
 
-	public List<String> fillTenantDropdown() {
-		List<String> names = new ArrayList<String>();
-		try {
-			ps = connection.prepareStatement("SELECT name FROM tenants WHERE name IS NOT NULL");
-			rs = ps.executeQuery();
-			while (rs.next()) {
-				names.add(rs.getString(1));
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return names;
-	}
-	
-	public boolean recordTotalCost(int sum, String desc) {
+	public ArrayList<Billing> recordTotalCost(int sum, String desc) {
 		ArrayList<Billing> billing = new ArrayList<>();
 		try {
 			ps = connection.prepareStatement(
-					"SELECT tenants.id, flats.floorSpace FROM tenants INNER JOIN flats ON tenants.flatnum=flats.id WHERE tenants.name IS NOT NULL");
+					"SELECT tenants.id, flats.floorSpace, tenants.name FROM tenants INNER JOIN flats ON tenants.flatnum=flats.id WHERE tenants.name IS NOT NULL");
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				billing.add(new Billing(rs.getInt(1), rs.getInt(2)));
+				billing.add(new Billing(rs.getInt(1), rs.getInt(2), desc, rs.getString(3)));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
 		}
 		int maxFloorspace = 0;
-		for (Billing i: billing) {
-			maxFloorspace+=i.getFloorSpace();
+		for (Billing i : billing) {
+			maxFloorspace += i.getFloorSpace();
 		}
-		for (Billing i: billing) {
-			i.setCost((sum/maxFloorspace)*i.getFloorSpace());
+		for (Billing i : billing) {
+			i.setCost(-((sum / maxFloorspace) * i.getFloorSpace()));
 		}
+		return billing;
+	}
+
+	public boolean commitRecordedTotalCost(List<Billing> billing) {
 		try {
 			for (Billing i : billing) {
 				ps = connection.prepareStatement("INSERT INTO charges(sum, description, tenant) VALUES (?,?,?)");
 				ps.setInt(1, (int) i.getCost());
-				ps.setString(2, desc);
+				ps.setString(2, i.getDesc());
 				ps.setInt(3, i.getFlatnum());
 				ps.executeUpdate();
 				ps = connection
 						.prepareStatement("UPDATE tenants SET balance=balance+? WHERE id=? AND name IS NOT NULL");
-				ps.setInt(1, (int) -i.getCost());
+				ps.setInt(1, (int) i.getCost());
 				ps.setInt(2, i.getFlatnum());
 				ps.executeUpdate();
 			}

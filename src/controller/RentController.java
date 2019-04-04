@@ -7,6 +7,7 @@ import javax.faces.bean.ApplicationScoped;
 import javax.faces.bean.ManagedBean;
 
 import dao.RentDao;
+import model.Billing;
 
 @ManagedBean
 @ApplicationScoped
@@ -15,7 +16,9 @@ public class RentController {
 	private RentDao rentDao;
 	private String nameForDelete;
 	private String nameForCashIn;
-	
+	private int sum;
+	private String desc;
+
 	@PostConstruct
 	public void init() {
 		rentDao = new RentDao();
@@ -33,22 +36,30 @@ public class RentController {
 		return rentDao.recordDeposit(tenantName, sum);
 	}
 
-	public boolean commonCharge(int sum, String desc) {
+	public List<Billing> commonCharge(int sum, String desc) {
+		setSum(sum);
+		setDesc(desc);
 		return rentDao.recordCommonCharge(sum, desc);
 	}
-	
-	public boolean totalCost(int sum, String desc) {
+
+	public boolean finlizeCommonCharge() {
+		return rentDao.commitRecordedCommonCharge(rentDao.recordCommonCharge(this.sum, this.desc));
+	}
+
+	public List<Billing> totalCost(int sum, String desc) {
+		setSum(sum);
+		setDesc(desc);
 		return rentDao.recordTotalCost(sum, desc);
+	}
+
+	public boolean finalizeTotalCost() {
+		return rentDao.commitRecordedTotalCost(rentDao.recordTotalCost(this.sum, this.desc));
 	}
 
 // =============================================================================================	
 
 	public List<String> fillTenantList() {
 		return rentDao.fillTenantDropdown();
-	}
-	
-	public void clear() {
-		
 	}
 
 	public String getNameForDelete() {
@@ -65,6 +76,22 @@ public class RentController {
 
 	public void setNameForCashIn(String nameForCashIn) {
 		this.nameForCashIn = nameForCashIn;
+	}
+
+	public int getSum() {
+		return sum;
+	}
+
+	public void setSum(int sum) {
+		this.sum = sum;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
 	}
 
 }

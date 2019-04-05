@@ -97,7 +97,7 @@ public class RentDao {
 			return false;
 		}
 		try {
-			ps = connection.prepareStatement("INSERT INTO deposits(sum, balance, tenant) VALUES (?,?,?)");
+			ps = connection.prepareStatement("INSERT INTO deposits(sum, balance_after, tenant) VALUES (?,?,?)");
 			ps.setInt(1, sum);
 			ps.setInt(2, balance + sum);
 			ps.setInt(3, tenant);

@@ -16,6 +16,12 @@ public class Deposit {
 		this.date = date;
 	}
 
+	public Deposit(int amount, String tenant, String date) {
+		this.amount = amount;
+		this.tenant = tenant;
+		this.date = date;
+	}
+
 	public String getDate() {
 		return date;
 	}

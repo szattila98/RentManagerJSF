@@ -20,6 +20,13 @@ public class Charge {
 		this.date = date;
 	}
 
+	public Charge(int amount, String description, String tenantName, String date) {
+		this.amount = amount;
+		this.description = description;
+		this.tenantName = tenantName;
+		this.date = date;
+	}
+
 	public String getDate() {
 		return date;
 	}

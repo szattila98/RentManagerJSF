@@ -16,6 +16,7 @@ import model.Billing;
 import model.Charge;
 import model.Debt;
 import model.Deposit;
+import model.Tabulation;
 
 @ManagedBean
 @ApplicationScoped
@@ -85,6 +86,20 @@ public class RentController {
 			return new ArrayList<Deposit>();
 		}
 		return rentDao.listDepositsByTenant(parseDate(from), parseDate(to), name);
+	}
+	
+	public Tabulation listTabulation(String from, String to) {
+		if (from.isEmpty() || to.isEmpty()) {
+			return new Tabulation();
+		}
+		return rentDao.listTabulationForEveryTenant(parseDate(from), parseDate(to));
+	}
+	
+	public Tabulation listBuildingTabulation(String from, String to) {
+		if (from.isEmpty() || to.isEmpty()) {
+			return new Tabulation();
+		}
+		return rentDao.listTabulationForWholeBuilding(parseDate(from), parseDate(to));
 	}
 
 // =============================================================================================	

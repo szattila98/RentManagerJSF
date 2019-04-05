@@ -246,7 +246,8 @@
 								</tr>
 							</table>
 
-							<p:dataTable id="deptTable" var="debt" tableStyle="width: auto;" emptyMessage="Nincsenek tartozások erre az időszakra!"
+							<p:dataTable id="deptTable" var="debt" tableStyle="width: auto;"
+								emptyMessage="Nincsenek tartozások erre az időszakra!"
 								value="#{rentController.DebtsByDateAndName(from.value, to.value, rentController.nameForDebtList)}">
 								<p:column headerText="Dátum">
 									<h:outputText value="#{debt.date}" />
@@ -300,7 +301,8 @@
 								</table>
 							</p:column>
 							<p:column style="text-align: center">
-								<p:dataTable id="depositTable" var="deposit" emptyMessage="Nincsenek befizetések erre az időszakra!"
+								<p:dataTable id="depositTable" var="deposit"
+									emptyMessage="Nincsenek befizetések erre az időszakra!"
 									tableStyle="width: auto; margin: 0px auto; text-align: center"
 									value="#{rentController.DepositsByDateAndName(from1.value, to1.value, rentController.nameForChargeAndDepositList)}">
 									<p:column headerText="Dátum">
@@ -312,7 +314,8 @@
 								</p:dataTable>
 							</p:column>
 							<p:column style="text-align: center">
-								<p:dataTable id="chargeTable" var="charge" emptyMessage="Nincsenek költségek erre az időszakra!"
+								<p:dataTable id="chargeTable" var="charge"
+									emptyMessage="Nincsenek költségek erre az időszakra!"
 									tableStyle="width: auto; margin: 0px auto; text-align: center"
 									value="#{rentController.ChargesByDateAndName(from1.value, to1.value, rentController.nameForChargeAndDepositList)}">
 									<p:column headerText="Dátum">
@@ -323,6 +326,180 @@
 									</p:column>
 									<p:column headerText="Leírás">
 										<h:outputText value="#{charge.description}" />
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:panelGrid>
+					</h:form>
+				</p:panel>
+			</p:panelGrid>
+
+			<p:panelGrid columns="1" layout="grid" styleClass="ui-noborder">
+				<p:panel toggleable="true" toggleSpeed="500" collapsed="true"
+					header="Összes lakó tartozása, befizetése és elszámolt költsége"
+					footer="Válasszon ki két dátumot és a rendszer kilistázza az adott időszak között kiírt költségeket, befizetéseket és tartozásokat!"
+					style="margin-bottom:20px">
+					<h:form id="listalltenants">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-noborder">
+							<p:column width="250px; text-align: center; margin: 0px auto;">
+								<table>
+									<tr>
+										<td><p:calendar id="from2" binding="#{from2}"
+												placeholder="TÓL" required="true"
+												requiredMessage="Dátum szükséges!" pattern="yyyy-MM-dd"
+												mask="true">
+											</p:calendar></td>
+										<td><p:message for="from2" style="width: 115px" /></td>
+									</tr>
+									<tr>
+										<td><p:calendar id="to2" binding="#{to2}"
+												placeholder="IG" required="true"
+												requiredMessage="Dátum szükséges!" pattern="yyyy-MM-dd"
+												mask="true">
+											</p:calendar></td>
+										<td><p:message for="to2" style="width: 115px" /></td>
+									</tr>
+									<tr>
+										<td><p:commandButton title="Tovább"
+												action="#{rentController.listTabulation(from2.value, to2.value)}"
+												ajax="true" update="listalltenants" /></td>
+									</tr>
+								</table>
+							</p:column>
+							<p:column style="text-align: center">
+								<p:dataTable id="depositTable" var="deposit"
+									emptyMessage="Nincsenek befizetések erre az időszakra!"
+									tableStyle="width: auto; margin: 0px auto; text-align: center"
+									value="#{rentController.listTabulation(from2.value, to2.value).deposits}">
+									<p:column headerText="Név">
+										<h:outputText value="#{deposit.tenant}" />
+									</p:column>
+									<p:column headerText="Dátum">
+										<h:outputText value="#{deposit.date}" />
+									</p:column>
+									<p:column headerText="Befizetés">
+										<h:outputText value="#{deposit.amount}" />
+									</p:column>
+								</p:dataTable>
+							</p:column>
+							<p:column style="text-align: center">
+								<p:dataTable id="chargeTable" var="charge"
+									emptyMessage="Nincsenek költségek erre az időszakra!"
+									tableStyle="width: auto; margin: 0px auto; text-align: center"
+									value="#{rentController.listTabulation(from2.value, to2.value).charges}">
+									<p:column headerText="Név">
+										<h:outputText value="#{charge.tenantName}" />
+									</p:column>
+									<p:column headerText="Dátum">
+										<h:outputText value="#{charge.date}" />
+									</p:column>
+									<p:column headerText="Költség">
+										<h:outputText value="#{charge.amount}" />
+									</p:column>
+									<p:column headerText="Leírás">
+										<h:outputText value="#{charge.description}" />
+									</p:column>
+								</p:dataTable>
+							</p:column>
+							<p:column style="text-align: center">
+								<p:dataTable id="deptTable" var="debt" tableStyle="width: auto;"
+									emptyMessage="Nincsenek tartozások erre az időszakra!"
+									value="#{rentController.listTabulation(from2.value, to2.value).debts}">
+									<p:column headerText="Név">
+										<h:outputText value="#{debt.name}" />
+									</p:column>
+									<p:column headerText="Dátum">
+										<h:outputText value="#{debt.date}" />
+									</p:column>
+									<p:column headerText="Tartozás">
+										<h:outputText value="#{debt.balance}" />
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:panelGrid>
+					</h:form>
+				</p:panel>
+			</p:panelGrid>
+
+			<p:panelGrid columns="1" layout="grid" styleClass="ui-noborder">
+				<p:panel toggleable="true" toggleSpeed="500" collapsed="true"
+					header="Az egész épület tartozása, befizetése és elszámolt költsége"
+					footer="Válasszon ki két dátumot és a rendszer kilistázza az adott időszak között kiírt költségeket, befizetéseket és tartozásokat!"
+					style="margin-bottom:20px">
+					<h:form id="listallbuilding">
+						<p:panelGrid columns="4" layout="grid" styleClass="ui-noborder">
+							<p:column width="250px; text-align: center; margin: 0px auto;">
+								<table>
+									<tr>
+										<td><p:calendar id="from3" binding="#{from3}"
+												placeholder="TÓL" required="true"
+												requiredMessage="Dátum szükséges!" pattern="yyyy-MM-dd"
+												mask="true">
+											</p:calendar></td>
+										<td><p:message for="from3" style="width: 115px" /></td>
+									</tr>
+									<tr>
+										<td><p:calendar id="to3" binding="#{to3}"
+												placeholder="IG" required="true"
+												requiredMessage="Dátum szükséges!" pattern="yyyy-MM-dd"
+												mask="true">
+											</p:calendar></td>
+										<td><p:message for="to3" style="width: 115px" /></td>
+									</tr>
+									<tr>
+										<td><p:commandButton title="Tovább"
+												action="#{rentController.listBuildingTabulation(from3.value, to3.value)}"
+												ajax="true" update="listallbuilding" /></td>
+									</tr>
+								</table>
+							</p:column>
+							<p:column style="text-align: center">
+								<p:dataTable id="depositTable" var="deposit"
+									emptyMessage="Nincsenek befizetések erre az időszakra!"
+									tableStyle="width: auto; margin: 0px auto; text-align: center"
+									value="#{rentController.listBuildingTabulation(from3.value, to3.value).deposits}">
+									<p:column headerText="Név">
+										<h:outputText value="#{deposit.tenant}" />
+									</p:column>
+									<p:column headerText="Dátum">
+										<h:outputText value="#{deposit.date}" />
+									</p:column>
+									<p:column headerText="Befizetés">
+										<h:outputText value="#{deposit.amount}" />
+									</p:column>
+								</p:dataTable>
+							</p:column>
+							<p:column style="text-align: center">
+								<p:dataTable id="chargeTable" var="charge"
+									emptyMessage="Nincsenek költségek erre az időszakra!"
+									tableStyle="width: auto; margin: 0px auto; text-align: center"
+									value="#{rentController.listBuildingTabulation(from3.value, to3.value).charges}">
+									<p:column headerText="Név">
+										<h:outputText value="#{charge.tenantName}" />
+									</p:column>
+									<p:column headerText="Dátum">
+										<h:outputText value="#{charge.date}" />
+									</p:column>
+									<p:column headerText="Költség">
+										<h:outputText value="#{charge.amount}" />
+									</p:column>
+									<p:column headerText="Leírás">
+										<h:outputText value="#{charge.description}" />
+									</p:column>
+								</p:dataTable>
+							</p:column>
+							<p:column style="text-align: center">
+								<p:dataTable id="deptTable" var="debt" tableStyle="width: auto;"
+									emptyMessage="Nincsenek tartozások erre az időszakra!"
+									value="#{rentController.listBuildingTabulation(from3.value, to3.value).debts}">
+									<p:column headerText="Név">
+										<h:outputText value="#{debt.name}" />
+									</p:column>
+									<p:column headerText="Dátum">
+										<h:outputText value="#{debt.date}" />
+									</p:column>
+									<p:column headerText="Tartozás">
+										<h:outputText value="#{debt.balance}" />
 									</p:column>
 								</p:dataTable>
 							</p:column>

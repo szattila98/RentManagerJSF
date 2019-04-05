@@ -13,6 +13,7 @@ import model.Billing;
 import model.Charge;
 import model.Debt;
 import model.Deposit;
+import model.Tabulation;
 
 public class RentDao {
 
@@ -133,7 +134,7 @@ public class RentDao {
 		}
 		for (Billing i : billings) {
 			i.setCost(-sum * i.getFloorSpace());
-			i.setBalance_after((int) (i.getBalance_after()+i.getCost()));
+			i.setBalance_after((int) (i.getBalance_after() + i.getCost()));
 		}
 		return billings;
 	}
@@ -141,7 +142,8 @@ public class RentDao {
 	public boolean commitRecordedCommonCharge(List<Billing> billings) {
 		try {
 			for (Billing i : billings) {
-				ps = connection.prepareStatement("INSERT INTO charges(sum, description, balance_after, tenant) VALUES (?,?,?,?)");
+				ps = connection.prepareStatement(
+						"INSERT INTO charges(sum, description, balance_after, tenant) VALUES (?,?,?,?)");
 				ps.setInt(1, (int) i.getCost());
 				ps.setString(2, i.getDesc());
 				ps.setInt(3, i.getBalance_after());
@@ -179,7 +181,7 @@ public class RentDao {
 		}
 		for (Billing i : billing) {
 			i.setCost(-((sum / maxFloorspace) * i.getFloorSpace()));
-			i.setBalance_after((int) (i.getBalance_after()+i.getCost()));
+			i.setBalance_after((int) (i.getBalance_after() + i.getCost()));
 		}
 		return billing;
 	}
@@ -187,7 +189,8 @@ public class RentDao {
 	public boolean commitRecordedTotalCost(List<Billing> billing) {
 		try {
 			for (Billing i : billing) {
-				ps = connection.prepareStatement("INSERT INTO charges(sum, description, balance_after, tenant) VALUES (?,?,?,?)");
+				ps = connection.prepareStatement(
+						"INSERT INTO charges(sum, description, balance_after, tenant) VALUES (?,?,?,?)");
 				ps.setInt(1, (int) i.getCost());
 				ps.setString(2, i.getDesc());
 				ps.setInt(3, i.getBalance_after());
@@ -206,7 +209,7 @@ public class RentDao {
 		}
 		return true;
 	}
-	
+
 	public ArrayList<Debt> listDebtsByTenant(Date from, Date to, String name) {
 		ArrayList<Debt> debts = new ArrayList<>();
 		try {
@@ -224,7 +227,7 @@ public class RentDao {
 		}
 		return debts;
 	}
-	
+
 	public ArrayList<Charge> listChargesByTenant(Date from, Date to, String name) {
 		ArrayList<Charge> charges = new ArrayList<>();
 		try {
@@ -242,7 +245,7 @@ public class RentDao {
 		}
 		return charges;
 	}
-	
+
 	public ArrayList<Deposit> listDepositsByTenant(Date from, Date to, String name) {
 		ArrayList<Deposit> deposits = new ArrayList<>();
 		try {
@@ -259,5 +262,91 @@ public class RentDao {
 			e.printStackTrace();
 		}
 		return deposits;
+	}
+	
+	public Tabulation listTabulationForEveryTenant(Date from, Date to) {
+		ArrayList<Deposit> deposits = new ArrayList<>();
+		ArrayList<Charge> charges = new ArrayList<>();
+		ArrayList<Debt> debts = new ArrayList<>();
+		try {
+			ps = connection.prepareStatement(
+					"SELECT deposits.sum, deposits.date, tenants.name FROM tenants INNER JOIN deposits ON tenants.id=deposits.tenant WHERE tenants.name IS NOT NULL AND deposits.date BETWEEN ? AND ?");
+			ps.setDate(1, new java.sql.Date(from.getTime()));
+			ps.setDate(2, new java.sql.Date(to.getTime()));
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				deposits.add(new Deposit(rs.getInt(1), rs.getDate(2).toString(), rs.getString(3)));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			ps = connection.prepareStatement(
+					"SELECT charges.sum, charges.description, tenants.name, charges.date FROM tenants INNER JOIN charges ON tenants.id=charges.tenant WHERE tenants.name IS NOT NULL AND charges.date BETWEEN ? AND ?");
+			ps.setDate(1, new java.sql.Date(from.getTime()));
+			ps.setDate(2, new java.sql.Date(to.getTime()));
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				charges.add(new Charge(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getDate(4).toString()));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			ps = connection.prepareStatement(
+					"SELECT tenants.name, charges.balance_after, charges.date FROM tenants INNER JOIN charges ON tenants.id=charges.tenant WHERE tenants.name IS NOT NULL AND charges.date BETWEEN ? AND ?");
+			ps.setDate(1, new java.sql.Date(from.getTime()));
+			ps.setDate(2, new java.sql.Date(to.getTime()));
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				debts.add(new Debt(rs.getString(1), rs.getInt(2), rs.getDate(3).toString()));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return new Tabulation(deposits, charges, debts);
+	}
+	
+	public Tabulation listTabulationForWholeBuilding(Date from, Date to) {
+		ArrayList<Deposit> deposits = new ArrayList<>();
+		ArrayList<Charge> charges = new ArrayList<>();
+		ArrayList<Debt> debts = new ArrayList<>();
+		try {
+			ps = connection.prepareStatement(
+					"SELECT deposits.sum, deposits.date, tenants.name FROM tenants LEFT JOIN deposits ON tenants.id=deposits.tenant WHERE deposits.date BETWEEN ? AND ?");
+			ps.setDate(1, new java.sql.Date(from.getTime()));
+			ps.setDate(2, new java.sql.Date(to.getTime()));
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				deposits.add(new Deposit(rs.getInt(1), rs.getDate(2).toString(), rs.getString(3)));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			ps = connection.prepareStatement(
+					"SELECT charges.sum, charges.description, tenants.name, charges.date FROM tenants LEFT JOIN charges ON tenants.id=charges.tenant WHERE charges.date BETWEEN ? AND ?");
+			ps.setDate(1, new java.sql.Date(from.getTime()));
+			ps.setDate(2, new java.sql.Date(to.getTime()));
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				charges.add(new Charge(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getDate(4).toString()));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			ps = connection.prepareStatement(
+					"SELECT tenants.name, charges.balance_after, charges.date FROM tenants LEFT JOIN charges ON tenants.id=charges.tenant WHERE charges.date BETWEEN ? AND ?");
+			ps.setDate(1, new java.sql.Date(from.getTime()));
+			ps.setDate(2, new java.sql.Date(to.getTime()));
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				debts.add(new Debt(rs.getString(1), rs.getInt(2), rs.getDate(3).toString()));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return new Tabulation(deposits, charges, debts);
 	}
 }

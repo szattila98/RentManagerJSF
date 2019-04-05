@@ -3,15 +3,12 @@ package model;
 public class Debt {
 
 	private String name;
-	private int balanceAtStartOfMonth;
-	private int balanceAtEndOfMonth;
 	private int balance;
 	private String date;
 
-	public Debt(String name, int balanceAtStartOfMonth, int balanceAtEndOfMonth, String date) {
+	public Debt(String name, int balance, String date) {
 		this.name = name;
-		this.balanceAtStartOfMonth = balanceAtStartOfMonth;
-		this.balanceAtEndOfMonth = balanceAtEndOfMonth;
+		this.balance = balance;
 		this.date = date;
 	}
 
@@ -42,22 +39,6 @@ public class Debt {
 
 	public void setBalance(int balance) {
 		this.balance = balance;
-	}
-
-	public int getBalanceAtStartOfMonth() {
-		return balanceAtStartOfMonth;
-	}
-
-	public void setBalanceAtStartOfMonth(int balanceAtStartOfMonth) {
-		this.balanceAtStartOfMonth = balanceAtStartOfMonth;
-	}
-
-	public int getBalanceAtEndOfMonth() {
-		return balanceAtEndOfMonth;
-	}
-
-	public void setBalanceAtEndOfMonth(int balanceAtEndOfMonth) {
-		this.balanceAtEndOfMonth = balanceAtEndOfMonth;
 	}
 
 }

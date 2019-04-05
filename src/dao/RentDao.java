@@ -6,9 +6,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import model.Billing;
+import model.Charge;
+import model.Debt;
+import model.Deposit;
 
 public class RentDao {
 
@@ -119,16 +123,17 @@ public class RentDao {
 		ArrayList<Billing> billings = new ArrayList<>();
 		try {
 			ps = connection.prepareStatement(
-					"SELECT tenants.id, flats.floorSpace, tenants.name FROM tenants INNER JOIN flats ON tenants.flatnum=flats.id WHERE tenants.name IS NOT NULL");
+					"SELECT tenants.id, flats.floorSpace, tenants.name, tenants.balance FROM tenants INNER JOIN flats ON tenants.flatnum=flats.id WHERE tenants.name IS NOT NULL");
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				billings.add(new Billing(rs.getInt(1), rs.getInt(2), desc, rs.getString(3)));
+				billings.add(new Billing(rs.getInt(1), rs.getInt(2), desc, rs.getString(3), rs.getInt(4)));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		for (Billing i : billings) {
 			i.setCost(-sum * i.getFloorSpace());
+			i.setBalance_after((int) (i.getBalance_after()+i.getCost()));
 		}
 		return billings;
 	}
@@ -136,10 +141,11 @@ public class RentDao {
 	public boolean commitRecordedCommonCharge(List<Billing> billings) {
 		try {
 			for (Billing i : billings) {
-				ps = connection.prepareStatement("INSERT INTO charges(sum, description, tenant) VALUES (?,?,?)");
+				ps = connection.prepareStatement("INSERT INTO charges(sum, description, balance_after, tenant) VALUES (?,?,?,?)");
 				ps.setInt(1, (int) i.getCost());
 				ps.setString(2, i.getDesc());
-				ps.setInt(3, i.getFlatnum());
+				ps.setInt(3, i.getBalance_after());
+				ps.setInt(4, i.getFlatnum());
 				ps.executeUpdate();
 				ps = connection
 						.prepareStatement("UPDATE tenants SET balance=balance+? WHERE id=? AND name IS NOT NULL");
@@ -159,10 +165,10 @@ public class RentDao {
 		ArrayList<Billing> billing = new ArrayList<>();
 		try {
 			ps = connection.prepareStatement(
-					"SELECT tenants.id, flats.floorSpace, tenants.name FROM tenants INNER JOIN flats ON tenants.flatnum=flats.id WHERE tenants.name IS NOT NULL");
+					"SELECT tenants.id, flats.floorSpace, tenants.name, tenants.balance FROM tenants INNER JOIN flats ON tenants.flatnum=flats.id WHERE tenants.name IS NOT NULL");
 			rs = ps.executeQuery();
 			while (rs.next()) {
-				billing.add(new Billing(rs.getInt(1), rs.getInt(2), desc, rs.getString(3)));
+				billing.add(new Billing(rs.getInt(1), rs.getInt(2), desc, rs.getString(3), rs.getInt(4)));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -173,6 +179,7 @@ public class RentDao {
 		}
 		for (Billing i : billing) {
 			i.setCost(-((sum / maxFloorspace) * i.getFloorSpace()));
+			i.setBalance_after((int) (i.getBalance_after()+i.getCost()));
 		}
 		return billing;
 	}
@@ -180,10 +187,11 @@ public class RentDao {
 	public boolean commitRecordedTotalCost(List<Billing> billing) {
 		try {
 			for (Billing i : billing) {
-				ps = connection.prepareStatement("INSERT INTO charges(sum, description, tenant) VALUES (?,?,?)");
+				ps = connection.prepareStatement("INSERT INTO charges(sum, description, balance_after, tenant) VALUES (?,?,?,?)");
 				ps.setInt(1, (int) i.getCost());
 				ps.setString(2, i.getDesc());
-				ps.setInt(3, i.getFlatnum());
+				ps.setInt(3, i.getBalance_after());
+				ps.setInt(4, i.getFlatnum());
 				ps.executeUpdate();
 				ps = connection
 						.prepareStatement("UPDATE tenants SET balance=balance+? WHERE id=? AND name IS NOT NULL");
@@ -197,5 +205,59 @@ public class RentDao {
 			return false;
 		}
 		return true;
+	}
+	
+	public ArrayList<Debt> listDebtsByTenant(Date from, Date to, String name) {
+		ArrayList<Debt> debts = new ArrayList<>();
+		try {
+			ps = connection.prepareStatement(
+					"SELECT charges.balance_after, charges.date FROM tenants INNER JOIN charges ON tenants.id=charges.tenant WHERE tenants.name=? AND charges.date BETWEEN ? AND ?");
+			ps.setString(1, name);
+			ps.setDate(2, new java.sql.Date(from.getTime()));
+			ps.setDate(3, new java.sql.Date(to.getTime()));
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				debts.add(new Debt(rs.getInt(1), rs.getDate(2).toString()));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return debts;
+	}
+	
+	public ArrayList<Charge> listChargesByTenant(Date from, Date to, String name) {
+		ArrayList<Charge> charges = new ArrayList<>();
+		try {
+			ps = connection.prepareStatement(
+					"SELECT charges.date, charges.sum, charges.description FROM tenants INNER JOIN charges ON tenants.id=charges.tenant WHERE tenants.name=? AND charges.date BETWEEN ? AND ?");
+			ps.setString(1, name);
+			ps.setDate(2, new java.sql.Date(from.getTime()));
+			ps.setDate(3, new java.sql.Date(to.getTime()));
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				charges.add(new Charge(rs.getDate(1).toString(), rs.getInt(2), rs.getString(3)));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return charges;
+	}
+	
+	public ArrayList<Deposit> listDepositsByTenant(Date from, Date to, String name) {
+		ArrayList<Deposit> deposits = new ArrayList<>();
+		try {
+			ps = connection.prepareStatement(
+					"SELECT deposits.date, deposits.sum FROM tenants INNER JOIN deposits ON tenants.id=deposits.tenant WHERE tenants.name=? AND deposits.date BETWEEN ? AND ?");
+			ps.setString(1, name);
+			ps.setDate(2, new java.sql.Date(from.getTime()));
+			ps.setDate(3, new java.sql.Date(to.getTime()));
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				deposits.add(new Deposit(rs.getDate(1).toString(), rs.getInt(2)));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return deposits;
 	}
 }

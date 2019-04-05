@@ -21,8 +21,9 @@ USE `rentmanager`;
 DROP TABLE IF EXISTS `charges`;
 CREATE TABLE IF NOT EXISTS `charges` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `date` datetime NOT NULL DEFAULT current_timestamp(),
+  `date` date NOT NULL DEFAULT current_timestamp(),
   `sum` int(11) NOT NULL DEFAULT 0,
+  `balance_after` int(11) NOT NULL DEFAULT 0,
   `description` text NOT NULL DEFAULT 'default',
   `tenant` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
@@ -32,26 +33,26 @@ CREATE TABLE IF NOT EXISTS `charges` (
 
 -- Dumping data for table rentmanager.charges: ~12 rows (approximately)
 /*!40000 ALTER TABLE `charges` DISABLE KEYS */;
-REPLACE INTO `charges` (`id`, `date`, `sum`, `description`, `tenant`) VALUES
-	(13, '2019-03-29 14:52:26', 180000, 'Garázsok vétele', 1),
-	(14, '2019-03-29 14:52:26', 180000, 'Garázsok vétele', 2),
-	(15, '2019-03-29 14:52:26', 180000, 'Garázsok vétele', 3),
-	(16, '2019-03-29 14:52:26', 160000, 'Garázsok vétele', 4),
-	(17, '2019-03-29 14:52:26', 160000, 'Garázsok vétele', 5),
-	(18, '2019-03-29 14:52:26', 160000, 'Garázsok vétele', 6),
-	(19, '2019-03-29 14:52:26', 140000, 'Garázsok vétele', 7),
-	(20, '2019-03-29 14:52:26', 140000, 'Garázsok vétele', 8),
-	(21, '2019-03-29 14:52:26', 140000, 'Garázsok vétele', 9),
-	(22, '2019-03-29 14:52:26', 120000, 'Garázsok vétele', 10),
-	(23, '2019-03-29 14:52:26', 120000, 'Garázsok vétele', 11),
-	(24, '2019-03-29 14:52:26', 120000, 'Garázsok vétele', 12);
+REPLACE INTO `charges` (`id`, `date`, `sum`, `balance_after`, `description`, `tenant`) VALUES
+	(13, '2019-03-29', 180000, 0, 'Garázsok vétele', 1),
+	(14, '2019-03-29', 180000, 0, 'Garázsok vétele', 2),
+	(15, '2019-03-29', 180000, 0, 'Garázsok vétele', 3),
+	(16, '2019-03-29', 160000, 0, 'Garázsok vétele', 4),
+	(17, '2019-03-29', 160000, 0, 'Garázsok vétele', 5),
+	(18, '2019-03-29', 160000, 0, 'Garázsok vétele', 6),
+	(19, '2019-03-29', 140000, 0, 'Garázsok vétele', 7),
+	(20, '2019-03-29', 140000, 0, 'Garázsok vétele', 8),
+	(21, '2019-03-29', 140000, 0, 'Garázsok vétele', 9),
+	(22, '2019-03-29', 120000, 0, 'Garázsok vétele', 10),
+	(23, '2019-03-29', 120000, 0, 'Garázsok vétele', 11),
+	(24, '2019-03-29', 120000, 0, 'Garázsok vétele', 12);
 /*!40000 ALTER TABLE `charges` ENABLE KEYS */;
 
 -- Dumping structure for tábla rentmanager.deposits
 DROP TABLE IF EXISTS `deposits`;
 CREATE TABLE IF NOT EXISTS `deposits` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `date` datetime NOT NULL DEFAULT current_timestamp(),
+  `date` date NOT NULL DEFAULT current_timestamp(),
   `sum` int(11) NOT NULL DEFAULT 0,
   `balance_after` int(11) NOT NULL DEFAULT 0,
   `tenant` int(11) NOT NULL DEFAULT 0,
@@ -63,8 +64,8 @@ CREATE TABLE IF NOT EXISTS `deposits` (
 -- Dumping data for table rentmanager.deposits: ~2 rows (approximately)
 /*!40000 ALTER TABLE `deposits` DISABLE KEYS */;
 REPLACE INTO `deposits` (`id`, `date`, `sum`, `balance_after`, `tenant`) VALUES
-	(1, '2019-03-29 12:35:28', 20000, 0, 6),
-	(2, '2019-03-29 12:35:47', 5000, 0, 6);
+	(1, '2019-03-29', 20000, 20000, 6),
+	(2, '2019-03-29', 5000, 5000, 6);
 /*!40000 ALTER TABLE `deposits` ENABLE KEYS */;
 
 -- Dumping structure for tábla rentmanager.flats

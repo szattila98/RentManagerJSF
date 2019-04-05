@@ -207,6 +207,130 @@
 				</p:panel>
 			</p:panelGrid>
 
+			<p:panelGrid columns="2" layout="grid" styleClass="ui-noborder">
+				<p:panel toggleable="true" toggleSpeed="500" collapsed="true"
+					header="Tartozások dátumra és lakókra szűrve"
+					footer="Válasszon ki két dátumot és egy lakó nevet, majd a rendszer kilistázza az adott időszak közötti tartozásokat!"
+					style="margin-bottom:20px">
+					<h:form id="listdebt">
+						<p:panelGrid columns="2" layout="grid" styleClass="ui-noborder">
+							<table>
+								<tr>
+									<td><p:calendar id="from" binding="#{from}"
+											placeholder="TÓL" required="true"
+											requiredMessage="Dátum szükséges!" pattern="yyyy-MM-dd"
+											mask="true">
+										</p:calendar></td>
+									<td><p:message for="from" style="width: 200px" /></td>
+								</tr>
+								<tr>
+									<td><p:calendar id="to" binding="#{to}" placeholder="IG"
+											required="true" requiredMessage="Dátum szükséges!"
+											pattern="yyyy-MM-dd" mask="true">
+										</p:calendar></td>
+									<td><p:message for="to" style="width: 200px" /></td>
+								</tr>
+								<tr>
+									<td><p:autoComplete id="dd3" dropdown="true"
+											value="#{rentController.nameForDebtList}"
+											completeMethod="#{rentController.fillTenantList()}"
+											required="true" requiredMessage="Név szükséges!">
+											<p:ajax event="itemSelect" update="dd3" />
+										</p:autoComplete></td>
+									<td><p:message for="dd3" style="width: 200px" /></td>
+								</tr>
+								<tr>
+									<td><p:commandButton title="Tovább"
+											action="#{rentController.DebtsByDateAndName(from.value, to.value, rentController.nameForDebtList)}"
+											ajax="true" update="listdebt" /></td>
+								</tr>
+							</table>
+
+							<p:dataTable id="deptTable" var="debt" tableStyle="width: auto;" emptyMessage="Nincsenek tartozások erre az időszakra!"
+								value="#{rentController.DebtsByDateAndName(from.value, to.value, rentController.nameForDebtList)}">
+								<p:column headerText="Dátum">
+									<h:outputText value="#{debt.date}" />
+								</p:column>
+								<p:column headerText="Tartozás">
+									<h:outputText value="#{debt.balance}" />
+								</p:column>
+							</p:dataTable>
+						</p:panelGrid>
+					</h:form>
+				</p:panel>
+
+				<p:panel toggleable="true" toggleSpeed="500" collapsed="true"
+					header="Költségek és befizetések lakókra és dátumra szűrve"
+					footer="Válasszon ki két dátumot és egy lakó nevet, majd a rendszer kilistázza az adott időszak közötti kiírt költségeket és befizetéseket!"
+					style="margin-bottom:20px">
+					<h:form id="listdepandchar">
+						<p:panelGrid columns="3" layout="grid" styleClass="ui-noborder">
+							<p:column width="250px; text-align: center; margin: 0px auto;">
+								<table>
+									<tr>
+										<td><p:calendar id="from1" binding="#{from1}"
+												placeholder="TÓL" required="true"
+												requiredMessage="Dátum szükséges!" pattern="yyyy-MM-dd"
+												mask="true">
+											</p:calendar></td>
+										<td><p:message for="from1" style="width: 115px" /></td>
+									</tr>
+									<tr>
+										<td><p:calendar id="to1" binding="#{to1}"
+												placeholder="IG" required="true"
+												requiredMessage="Dátum szükséges!" pattern="yyyy-MM-dd"
+												mask="true">
+											</p:calendar></td>
+										<td><p:message for="to1" style="width: 115px" /></td>
+									</tr>
+									<tr>
+										<td><p:autoComplete id="dd4" dropdown="true"
+												value="#{rentController.nameForChargeAndDepositList}"
+												completeMethod="#{rentController.fillTenantList()}"
+												required="true" requiredMessage="Név szükséges!">
+												<p:ajax event="itemSelect" update="dd4" />
+											</p:autoComplete></td>
+										<td><p:message for="dd4" style="width: 115px" /></td>
+									</tr>
+									<tr>
+										<td><p:commandButton title="Tovább"
+												action="#{rentController.ChargesByDateAndName(from1.value, to1.value, rentController.nameForChargeAndDepositList)}"
+												ajax="true" update="listdepandchar" /></td>
+									</tr>
+								</table>
+							</p:column>
+							<p:column style="text-align: center">
+								<p:dataTable id="depositTable" var="deposit" emptyMessage="Nincsenek befizetések erre az időszakra!"
+									tableStyle="width: auto; margin: 0px auto; text-align: center"
+									value="#{rentController.DepositsByDateAndName(from1.value, to1.value, rentController.nameForChargeAndDepositList)}">
+									<p:column headerText="Dátum">
+										<h:outputText value="#{deposit.date}" />
+									</p:column>
+									<p:column headerText="Befizetés">
+										<h:outputText value="#{deposit.amount}" />
+									</p:column>
+								</p:dataTable>
+							</p:column>
+							<p:column style="text-align: center">
+								<p:dataTable id="chargeTable" var="charge" emptyMessage="Nincsenek költségek erre az időszakra!"
+									tableStyle="width: auto; margin: 0px auto; text-align: center"
+									value="#{rentController.ChargesByDateAndName(from1.value, to1.value, rentController.nameForChargeAndDepositList)}">
+									<p:column headerText="Dátum">
+										<h:outputText value="#{charge.date}" />
+									</p:column>
+									<p:column headerText="Költség">
+										<h:outputText value="#{charge.amount}" />
+									</p:column>
+									<p:column headerText="Leírás">
+										<h:outputText value="#{charge.description}" />
+									</p:column>
+								</p:dataTable>
+							</p:column>
+						</p:panelGrid>
+					</h:form>
+				</p:panel>
+			</p:panelGrid>
+
 			<p:dialog header="Költözés sikeres!" widgetVar="dlg1" modal="true"
 				resizable="false" draggable="false">
 				<p:commandButton title="Bezárás" onclick="PF('dlg1').hide();" />

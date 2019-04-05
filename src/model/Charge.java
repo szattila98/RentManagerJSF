@@ -1,14 +1,12 @@
 package model;
 
-import java.util.Date;
-
 public class Charge {
 
-	private int id;
-	private Date date;
 	private int amount;
 	private String description;
 	private int tenant;
+	private String tenantName;
+	private String date;
 
 	public Charge(int amount, String description, int tenant) {
 		this.amount = amount;
@@ -16,19 +14,17 @@ public class Charge {
 		this.tenant = tenant;
 	}
 
-	public int getId() {
-		return id;
+	public Charge(String date, int amount, String description) {
+		this.amount = amount;
+		this.description = description;
+		this.date = date;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
@@ -54,6 +50,14 @@ public class Charge {
 
 	public void setTenant(int tenant) {
 		this.tenant = tenant;
+	}
+
+	public String getTenantName() {
+		return tenantName;
+	}
+
+	public void setTenantName(String tenantName) {
+		this.tenantName = tenantName;
 	}
 
 }

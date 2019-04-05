@@ -7,12 +7,14 @@ public class Billing {
 	private double cost;
 	private String desc;
 	private String name;
+	private int balance_after;
 
-	public Billing(int tenant, int floorSpace, String desc, String name) {
+	public Billing(int tenant, int floorSpace, String desc, String name, int balance_after) {
 		this.flatnum = tenant;
 		this.floorSpace = floorSpace;
 		this.desc = desc;
 		this.name = name;
+		this.balance_after = balance_after;
 	}
 
 	public int getFloorSpace() {
@@ -53,6 +55,14 @@ public class Billing {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public int getBalance_after() {
+		return balance_after;
+	}
+
+	public void setBalance_after(int balance_after) {
+		this.balance_after = balance_after;
 	}
 
 }

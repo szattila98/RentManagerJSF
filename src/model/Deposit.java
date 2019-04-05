@@ -1,32 +1,26 @@
 package model;
 
-import java.util.Date;
-
 public class Deposit {
 
-	private int id;
-	private Date date;
 	private int amount;
-	private int tenant;
+	private String tenant;
+	private String date;
 
-	public Deposit(int amount, int tenant) {
+	public Deposit(int amount, String tenant) {
 		this.amount = amount;
 		this.tenant = tenant;
 	}
 
-	public int getId() {
-		return id;
+	public Deposit(String date, int amount) {
+		this.amount = amount;
+		this.date = date;
 	}
 
-	public void setId(int id) {
-		this.id = id;
-	}
-
-	public Date getDate() {
+	public String getDate() {
 		return date;
 	}
 
-	public void setDate(Date date) {
+	public void setDate(String date) {
 		this.date = date;
 	}
 
@@ -38,11 +32,11 @@ public class Deposit {
 		this.amount = amount;
 	}
 
-	public int getTenant() {
+	public String getTenant() {
 		return tenant;
 	}
 
-	public void setTenant(int tenant) {
+	public void setTenant(String tenant) {
 		this.tenant = tenant;
 	}
 

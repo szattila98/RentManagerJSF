@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui">
+<h:head>
+</h:head>
+<h:body>
+	<ui:composition template="templates/template.xhtml">
+		<ui:define name="content">
+
+			<p:carousel numVisible="1" effect="easeInStrong"
+				headerText="Költség kiírások"
+				style="margin-top:12px ;margin-top:50px; background: linear-gradient(to bottom, rgba(206,220,231,1) 27%,rgba(89,106,114,1) 100%);"
+				responsive="true">
+				<p:tab title="comm">
+					<p:panelGrid columns="1" layout="grid" styleClass="ui-noborder">
+						<p:panel toggleable="false" toggleSpeed="500" collapsed="false"
+							header="Közös költség terhelése a lakókra"
+							footer="Írja be a költség okát és az összegét! Ez az összeg aztán az adott lakás négyzetméterével felszorozva terhelődik az összes lakó egyenlegére!"
+							style="margin-bottom:30px; margin-top: 30px;">
+							<h:form id="cch">
+								<table>
+									<tr>
+										<td><p:inputText id="desc" binding="#{desc}"
+												placeholder="Költség leírása" required="true"
+												requiredMessage="Leírás szükséges!" /></td>
+										<td><p:message for="desc" style="width: 200px" /></td>
+									</tr>
+									<tr>
+										<td><p:inputNumber id="sum2" binding="#{sum2}"
+												placeholder="Összeg" required="true"
+												requiredMessage="Összeg szükséges!" thousandSeparator=""
+												decimalSeparator="." decimalPlaces="0" maxValue="100000" /></td>
+										<td><p:message for="sum2" style="width: 200px" /></td>
+									</tr>
+									<tr>
+										<td><p:commandButton title="Tovább"
+												action="#{rentController.commonCharge(sum2.value, desc.value)}"
+												ajax="true"
+												oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg3').show();"
+												update="cch" /></td>
+									</tr>
+								</table>
+								<p:dialog header="Költség kiírás adatai" widgetVar="dlg3"
+									responsive="true" modal="true" resizable="false"
+									draggable="false">
+									<p:dataTable var="bill" tableStyle="width: auto;"
+										value="#{rentController.commonCharge(sum2.value, desc.value)}">
+										<p:column headerText="Lakó neve">
+											<h:outputText value="#{bill.name}" />
+										</p:column>
+										<p:column headerText="Terhelt összeg">
+											<h:outputText value="#{bill.cost}" />
+										</p:column>
+									</p:dataTable>
+									<p:commandButton title="Mentés"
+										action="#{rentController.finlizeCommonCharge()}"
+										oncomplete="PF('dlg3').hide();" />
+									<p:commandButton title="Mégse" onclick="PF('dlg3').hide();" />
+								</p:dialog>
+							</h:form>
+						</p:panel>
+					</p:panelGrid>
+				</p:tab>
+				<p:tab title="tot">
+					<p:panelGrid columns="1" layout="grid" styleClass="ui-noborder">
+						<p:panel toggleable="false" toggleSpeed="500" collapsed="false"
+							header="Összköltség terhelése a lakókra"
+							footer="Írja be a költség okát és az összegét! Ez az összeg aztán az adott lakás négyzetméterével leosztva terhelődik az összes lakó egyenlegére!"
+							style="margin-bottom:30px; margin-top: 30px;">
+							<h:form id="tc">
+								<table>
+									<tr>
+										<td><p:inputText id="desc2" binding="#{desc2}"
+												placeholder="Költség leírása" required="true"
+												requiredMessage="Leírás szükséges!" /></td>
+										<td><p:message for="desc2" style="width: 200px" /></td>
+									</tr>
+									<tr>
+										<td><p:inputNumber id="sum3" binding="#{sum3}"
+												placeholder="Összeg" required="true"
+												requiredMessage="Összeg szükséges!" thousandSeparator=""
+												decimalSeparator="." decimalPlaces="0" maxValue="100000000" /></td>
+										<td><p:message for="sum3" style="width: 200px" /></td>
+									</tr>
+									<tr>
+										<td><p:commandButton title="Tovább"
+												action="#{rentController.totalCost(sum3.value, desc2.value)}"
+												ajax="true"
+												oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg4').show();"
+												update="tc" /></td>
+									</tr>
+								</table>
+								<p:dialog header="Költség kiírás adatai" widgetVar="dlg4"
+									modal="true" resizable="false" draggable="false"
+									responsive="true">
+									<p:dataTable var="bill" tableStyle="width: auto;"
+										value="#{rentController.totalCost(sum3.value, desc2.value)}">
+										<p:column headerText="Lakó neve">
+											<h:outputText value="#{bill.name}" />
+										</p:column>
+										<p:column headerText="Terhelt összeg">
+											<h:outputText value="#{bill.cost}" />
+										</p:column>
+									</p:dataTable>
+									<p:commandButton title="Mentés"
+										action="#{rentController.finalizeTotalCost()}"
+										oncomplete="PF('dlg4').hide();" />
+									<p:commandButton title="Mégse" onclick="PF('dlg4').hide();" />
+								</p:dialog>
+							</h:form>
+						</p:panel>
+					</p:panelGrid>
+				</p:tab>
+			</p:carousel>
+
+		</ui:define>
+	</ui:composition>
+</h:body>
+</html>

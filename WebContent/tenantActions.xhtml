@@ -16,7 +16,7 @@
 				footer="Írja be az emeletet, a lakás ajtószámát és az új lakó nevét a beköltöztetéshez!"
 				styleClass="first">
 				<h:form id="in">
-					<table>
+					<table style="width: 90%">
 						<tr>
 							<td><p:inputNumber id="floor" binding="#{floor}"
 									placeholder="Emelet" required="true"
@@ -36,7 +36,7 @@
 							<td><p:message for="tenantName1" style="width: 200px" /></td>
 
 							<td style="text-align: center;"><p:commandButton
-									style="background: #33363b; height: 40px; border-radius: 8px;"
+									style="background: #33363b; height: 50px; border-radius: 8px;"
 									title="Új lakó beköltöztetése"
 									action="#{rentController.moveInTenant(floor.value, door.value, tenantName1.value)}"
 									ajax="true" update="in"

@@ -9,28 +9,26 @@
 <body>
 	<ui:composition>
 		<h:form>
-			<p:toolbar
-				style="background: linear-gradient(to bottom, rgba(206,220,231,1) 27%,rgba(89,106,114,1) 100%);">
+			<p:toolbar style="background: #33363b">
 				<f:facet name="left">
 					<h:outputText value="Lakóközösségi könyvelés"
-						style="font-size:30px; font-weight: bolder; margin-left:18px;" />
+						style="font-size:30px; font-weight: bolder; margin-left:18px; color: #eaeaea;" />
 				</f:facet>
 				<f:facet name="right">
-					<p:tabMenu activeIndex="#{param.i}"
-						style="background: linear-gradient(to bottom, rgba(206,220,231,1) 27%,rgba(89,106,114,1) 100%);">
-						<p:menuitem value="Otthon" outcome="index" icon="pi pi-star">
+					<p:tabMenu activeIndex="#{param.i}" styleClass="tabstrip">
+						<p:menuitem value="Főoldal" outcome="index" icon="fa fa-home">
 							<f:param name="i" value="0" />
 						</p:menuitem>
 						<p:menuitem value="Lakó műveletek" outcome="tenantActions"
-							icon="pi pi-search">
+							icon="fa fa-user">
 							<f:param name="i" value="1" />
 						</p:menuitem>
 						<p:menuitem value="Költség kiírások" outcome="charges"
-							icon="pi pi-search">
+							icon="fa fa-dollar">
 							<f:param name="i" value="2" />
 						</p:menuitem>
-						<p:menuitem value="Kimutatások" outcome="statistics"
-							icon="pi pi-search">
+						<p:menuitem value=" Kimutatások" outcome="statistics"
+							icon="fa fa-bar-chart">
 							<f:param name="i" value="3" />
 						</p:menuitem>
 					</p:tabMenu>

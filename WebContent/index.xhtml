@@ -10,8 +10,26 @@
 <h:body>
 	<ui:composition template="templates/template.xhtml">
 		<ui:define name="content">
-			
-			<p>shit</p>
+
+			<p:panel toggleable="false" toggleSpeed="500" collapsed="false"
+				header="Szoftver leírása" footer="" styleClass="main">
+				<p
+					style="font-size: 20px; font-family: monospace; text-align: center; color: #33363b;">Ez
+					a szoftver egy 4 emeletes, emeletenként 3 lakásos bérház könyvelési
+					munkálatait hívatott megkönnyíteni.</p>
+				<p
+					style="font-size: 20px; font-family: monospace; text-align: center; color: #33363b;">A
+					szoftver segítségével ön is képes lehet lakókat be és
+					kiköltöztetni, lakói befizetéseket felvinni, költségeket kiírni és
+					kimutatásokat készíteni dátumra és lakóra szűrve.</p>
+				<p
+					style="font-size: 20px; font-family: monospace; text-align: center; color: #33363b;">Kellemes
+					használatot!</p>
+
+				<div style="display: flex; justify-content: center;">
+					<img src="img/booker.png" alt="booker" width="22%" height="22%" />
+				</div>
+			</p:panel>
 
 		</ui:define>
 	</ui:composition>
